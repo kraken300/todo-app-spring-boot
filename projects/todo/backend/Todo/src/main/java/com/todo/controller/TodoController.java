@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import com.todo.TodoApplication;
+import com.todo.dto.TodoDTO;
 import com.todo.entity.Todo;
 import com.todo.service.TodoService;
 import com.todo.utils.Message;
@@ -22,10 +23,13 @@ import com.todo.utils.Message;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TodoController {
 
+    private final TodoApplication todoApplication;
+
 	private TodoService todoService;
 
-	public TodoController(TodoService todoService) {
+	public TodoController(TodoService todoService, TodoApplication todoApplication) {
 		this.todoService = todoService;
+		this.todoApplication = todoApplication;
 	}
 
 	@GetMapping("/get/{id}")
@@ -39,13 +43,13 @@ public class TodoController {
 	}
 
 	@PostMapping("/save")
-	public ResponseEntity<Message> saveTodo(@RequestBody Todo todo) {
-		return todoService.addTodo(todo);
+	public ResponseEntity<Message> saveTodo(@RequestBody TodoDTO todoDTO) {
+		return todoService.addTodo(todoDTO);
 	}
 
 	@PutMapping("/update/{id}")
-	public ResponseEntity<?> updateTodo(@PathVariable Integer id, @RequestBody Todo todo) {
-		return todoService.updateTodo(id, todo);
+	public ResponseEntity<?> updateTodo(@PathVariable Integer id, @RequestBody TodoDTO todoDTO) {
+		return todoService.updateTodo(id, todoDTO);
 	}
 
 	@PutMapping("/updateCheck/{id}")

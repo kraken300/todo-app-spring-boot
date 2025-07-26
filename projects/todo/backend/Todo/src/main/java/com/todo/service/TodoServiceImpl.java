@@ -3,10 +3,12 @@ package com.todo.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.todo.dto.TodoDTO;
 import com.todo.entity.Todo;
 import com.todo.repository.TodoRepository;
 import com.todo.utils.ErrorMsg;
@@ -22,8 +24,14 @@ public class TodoServiceImpl implements TodoService {
 	}
 
 	@Override
-	public ResponseEntity<Message> addTodo(Todo todo) {
+	public ResponseEntity<Message> addTodo(TodoDTO todoDTO) {
+
+		Todo todo = new Todo();
+
+		BeanUtils.copyProperties(todoDTO, todo);
+
 		Todo saveTodo = todoRepository.save(todo);
+
 		Message saveMessage = new Message("Todo saved successfully!", saveTodo);
 		return new ResponseEntity<Message>(saveMessage, HttpStatus.CREATED);
 	}
@@ -48,16 +56,19 @@ public class TodoServiceImpl implements TodoService {
 
 	// TODO : Might need to change the logic (no need to add error part)
 	@Override
-	public ResponseEntity<?> updateTodo(Integer id, Todo newTodo) {
+	public ResponseEntity<?> updateTodo(Integer id, TodoDTO newTodoDTO) {
 		Optional<Todo> optTodo = todoRepository.findById(id);
 
 		ResponseEntity<?> rs = null;
 
 		if (optTodo.isPresent()) {
 			Todo oldTodo = optTodo.get();
-			oldTodo.setTitle(newTodo.getTitle());
-			oldTodo.setContent(newTodo.getContent());
-			oldTodo.setIsCompleted(newTodo.getIsCompleted());
+//			oldTodo.setTitle(newTodoDTO.getTitle());
+//			oldTodo.setContent(newTodoDTO.getContent());
+//			oldTodo.setIsCompleted(newTodoDTO.getIsCompleted());
+
+			BeanUtils.copyProperties(newTodoDTO, oldTodo);
+
 			Todo updatedTodo = todoRepository.save(oldTodo);
 			Message updateMessage = new Message("Todo updated successfully!", updatedTodo);
 			rs = new ResponseEntity<Message>(updateMessage, HttpStatus.OK);
@@ -88,7 +99,6 @@ public class TodoServiceImpl implements TodoService {
 	@Override
 	public List<Todo> getAllTodos() {
 		List<Todo> todos = todoRepository.findAll();
-		System.out.println(todos);
 		return todos;
 	}
 
