@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { TodoContext } from "./TodoContext"
+import { toast } from "react-toastify";
 
 export const TodoContextProvider = ({ children }) => {
 
     let [todos, setTodos] = useState(null);
 
-    let [message, setMessage] = useState("");
+    // let [message, setMessage] = useState("");
 
     useEffect(() => {
         let fetchData = async () => {
@@ -39,7 +40,8 @@ export const TodoContextProvider = ({ children }) => {
                 console.log(data);
                 let addedTodo = [...todos, data.todo];
                 setTodos(addedTodo);
-                setMessage(data.message);
+                // setMessage(data.message);
+                toast.success(data.message);
             }
         } catch (error) {
             console.log(error);
@@ -63,7 +65,8 @@ export const TodoContextProvider = ({ children }) => {
                 let data = await response.json();
                 let addedTodo = todos.map((todo) => (todo.id === data.todo.id) ? data.todo : todo);
                 setTodos(addedTodo);
-                setMessage(data.message);
+                // setMessage(data.message);
+                toast.success(data.message);
             }
         } catch (error) {
             console.log(error);
@@ -80,7 +83,8 @@ export const TodoContextProvider = ({ children }) => {
                 let data = await response.json();
                 let addedTodo = todos.filter((todo) => todo.id != id);
                 setTodos(addedTodo);
-                setMessage(data.message);
+                // setMessage(data.message);
+                toast.success(data.message);
             }
         } catch (error) {
             console.log(error);
@@ -97,14 +101,15 @@ export const TodoContextProvider = ({ children }) => {
                 let data = await response.json();
                    let addedTodo = todos.map((todo) => (todo.id === data.todo.id) ? data.todo : todo);
                 setTodos(addedTodo);
-                setMessage(data.message);
+                // setMessage(data.message);
+                toast.success(data.message);
             }
         } catch (error) {
             console.log(error);
         }
     }
 
-    const value = { todos, setTodos, addTodo, message, updateTodo, deleteTodo, handleCheckBox };
+    const value = { todos, setTodos, addTodo, updateTodo, deleteTodo, handleCheckBox };
 
     return (
         <TodoContext.Provider value={value}>
