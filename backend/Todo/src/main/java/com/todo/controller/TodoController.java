@@ -23,13 +23,10 @@ import com.todo.utils.Message;
 @CrossOrigin(origins = "http://localhost:5173")
 public class TodoController {
 
-    private final TodoApplication todoApplication;
+	private final TodoService todoService;
 
-	private TodoService todoService;
-
-	public TodoController(TodoService todoService, TodoApplication todoApplication) {
+	public TodoController(TodoService todoService) {
 		this.todoService = todoService;
-		this.todoApplication = todoApplication;
 	}
 
 	@GetMapping("/get/{id}")
