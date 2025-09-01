@@ -1,27 +1,27 @@
 import { useContext, useEffect, useState } from "react";
-import { TodoContext } from "./TodoContext"
+import { TodoContext } from "./TodoContext";
 import { toast } from "react-toastify";
 
 export const TodoContextProvider = ({ children }) => {
 
     let [todos, setTodos] = useState(null);
+    let [activeFilter, setActiveFilter] = useState(null);
 
-    // let [message, setMessage] = useState("");
+    let fetchData = async () => {
+        try {
+            let response = await fetch("http://localhost:8080/todo/getall");
+
+            if (response.ok) {
+                let data = await response.json();
+                console.log(data);
+                setTodos(data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
-        let fetchData = async () => {
-            try {
-                let response = await fetch("http://localhost:8080/todo/getall");
-
-                if (response.ok) {
-                    let data = await response.json();
-                    console.log(data);
-                    setTodos(data);
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
         fetchData();
     }, []);
 
@@ -37,10 +37,8 @@ export const TodoContextProvider = ({ children }) => {
 
             if (response.ok) {
                 let data = await response.json();
-                console.log(data);
                 let addedTodo = [...todos, data.todo];
                 setTodos(addedTodo);
-                // setMessage(data.message);
                 toast.success(data.message);
             }
         } catch (error) {
@@ -49,7 +47,6 @@ export const TodoContextProvider = ({ children }) => {
     }
 
     const updateTodo = async (updatedTodo) => {
-
         let { id, title, content, isCompleted } = updatedTodo;
 
         try {
@@ -65,7 +62,6 @@ export const TodoContextProvider = ({ children }) => {
                 let data = await response.json();
                 let addedTodo = todos.map((todo) => (todo.id === data.todo.id) ? data.todo : todo);
                 setTodos(addedTodo);
-                // setMessage(data.message);
                 toast.success(data.message);
             }
         } catch (error) {
@@ -83,7 +79,6 @@ export const TodoContextProvider = ({ children }) => {
                 let data = await response.json();
                 let addedTodo = todos.filter((todo) => todo.id != id);
                 setTodos(addedTodo);
-                // setMessage(data.message);
                 toast.success(data.message);
             }
         } catch (error) {
@@ -97,11 +92,10 @@ export const TodoContextProvider = ({ children }) => {
                 method: "PUT"
             });
 
-            if(response.ok){
+            if (response.ok) {
                 let data = await response.json();
-                   let addedTodo = todos.map((todo) => (todo.id === data.todo.id) ? data.todo : todo);
+                let addedTodo = todos.map((todo) => (todo.id === data.todo.id) ? data.todo : todo);
                 setTodos(addedTodo);
-                // setMessage(data.message);
                 toast.success(data.message);
             }
         } catch (error) {
@@ -109,7 +103,26 @@ export const TodoContextProvider = ({ children }) => {
         }
     }
 
-    const value = { todos, setTodos, addTodo, updateTodo, deleteTodo, handleCheckBox };
+    const handleToggleFilter = async (value) => {
+        setActiveFilter(value);
+
+        if (value == null) {
+            fetchData();
+            return;
+        }
+
+        try {
+            let response = await fetch(`http://localhost:8080/todo/filter/${value ? "true" : "false"}`);
+            if (response.ok) {
+                let data = await response.json();
+                setTodos(data);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const value = { todos, setTodos, addTodo, updateTodo, deleteTodo, handleCheckBox, activeFilter, handleToggleFilter };
 
     return (
         <TodoContext.Provider value={value}>

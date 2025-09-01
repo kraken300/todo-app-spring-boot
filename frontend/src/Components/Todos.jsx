@@ -3,7 +3,7 @@ import { useTodoContext } from '../Context/TodoContextProvider';
 
 const Todos = () => {
 
-    let { todos, addTodo, message, updateTodo, deleteTodo, handleCheckBox } = useTodoContext();
+    let { todos, addTodo, updateTodo, deleteTodo, handleCheckBox, activeFilter, handleToggleFilter } = useTodoContext();
 
     let [input, setInput] = useState({
         title: "",
@@ -29,7 +29,6 @@ const Todos = () => {
     }
 
     let handleUpdateTodo = (todo) => {
-        // console.log(todo);
         setInput({
             id: todo.id,
             title: todo.title,
@@ -49,16 +48,13 @@ const Todos = () => {
         });
         setIsUpdateTodo(false);
     }
-    // console.log(input);
 
     return (
         <>
+            <div className="container mx-auto dark:bg-gray-300 max-w-full min-h-screen">
+                <h1 className="text-4xl text-black font-bold text-center py-4">Todos</h1>
 
-            <div className="container mx-aut dark:bg-gray-300 max-w-full min-h-screen">
-
-                <h1 className="text-4xl text-orange-400 text-center py-4">Todos</h1>
-
-                <form className='border-2 p-4 text-center w-4/5 mx-auto rounded flex flex-col md:w-1/2'>
+                <form className='border-2 p-4 text-center w-4/5 mx-auto rounded flex gap-2 flex-col md:w-1/2'>
                     <input type="text" name="title" id="title" placeholder='Enter title' value={input.title} onChange={handleChange} className='border rounded w-full p-1' required /> <br />
 
                     <input type="text" name="content" id="content" placeholder='Enter content' value={input.content} onChange={handleChange} className='border rounded w-full p-1' required /> <br />
@@ -72,27 +68,35 @@ const Todos = () => {
                                 <button type="submit" className='bg-emerald-500 p-2 rounded text-white hover:bg-emerald-600 cursor-pointer' onClick={handleSubmit}>Add Todo</button>
                             )
                     }
-
-
                 </form>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-4/5 mx-auto mt-4">
+                <div className="flex justify-center my-4">
+                    <button
+                        className={`px-4 py-2 rounded mr-2 cursor-pointer ${activeFilter === null ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-800"}`}
+                        onClick={() => handleToggleFilter(null)}>
+                        All
+                    </button>
+                    <button
+                        className={`px-4 py-2 rounded cursor-pointer ${activeFilter === true ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-800"}`}
+                        onClick={() => handleToggleFilter(true)}>
+                        Completed
+                    </button>
+                    <button
+                        className={`px-4 py-2 rounded cursor-pointer ${activeFilter === false ? "bg-blue-500 text-white" : "bg-gray-300 text-gray-800"}`}
+                        onClick={() => handleToggleFilter(false)}>
+                        Incomplete
+                    </button>
+                </div>
+
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-4/5 mx-auto">
                     {
                         todos?.map((todo, index) => {
                             let { id, title, content, isCompleted, createdAt, updatedAt } = todo;
                             return (
                                 <section key={id} className='border-2 m-2 p-4 rounded-md dark:bg-gray-200'>
-                                    {/* <h2 className="font-bold text-3xl text-emerald-400">{id}</h2> */}
                                     <h2 className={`text-2xl font-bold ${isCompleted && "line-through"}`}>{title}</h2>
 
                                     <p className={`text-lg ${isCompleted && "line-through"}`}>{content}</p>
-                                    {/* 
-                                    <h3>
-                                        {isCompleted ? "true" : "false"}
-                                        <input type="checkbox" name="task" id="task" checked={isCompleted} onChange={() => handleCheckBox(id)} />
-                                    </h3> */}
-
-
 
                                     <p className='text-sm text-slate-600'>Created : {new Date(createdAt).toLocaleString("en-IN", { timeZone: 'Asia/Kolkata' })}</p>
 
