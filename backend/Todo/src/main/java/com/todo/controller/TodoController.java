@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.todo.TodoApplication;
+
 import com.todo.dto.TodoDTO;
 import com.todo.entity.Todo;
 import com.todo.service.TodoService;
@@ -57,5 +57,10 @@ public class TodoController {
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteTodo(@PathVariable Integer id) {
 		return todoService.deleteTodo(id);
+	}
+
+	@GetMapping("/filter/{check}")
+	public List<Todo> filterByCheck(@PathVariable boolean check) {
+		return todoService.filterTodosByCheck(check);
 	}
 }

@@ -19,7 +19,9 @@ public interface TodoService {
 	ResponseEntity<?> deleteTodo(Integer id);
 
 	List<Todo> getAllTodos();
-	
+
 	ResponseEntity<Message> updateTodoCheck(Integer id);
+
+	List<Todo> filterTodosByCheck(boolean check);
 
 }
